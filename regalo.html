@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Un regalito para vos</title>
+<style>
+
+  /* ============================================================
+     RESET Y BASE
+     ============================================================ */
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: -apple-system, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    background: #FFFBF8;
+    color: #3A3A3C;
+    -webkit-font-smoothing: antialiased;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+  }
+
+  /* ============================================================
+     PALETA (referencia)
+     --rose-bg:      #FFFBF8  fondo cálido general
+     --rose-soft:    #FFE1E8  rosa pastel principal (superficies)
+     --rose-strong:  #FF8FA3  rosa acento (botones, CTAs)
+     --peach:        #FFEEE2  superficie secundaria
+     --ink:          #3A3A3C  texto principal (gris carbón iOS)
+     --ink-soft:      #8E8E93  texto secundario (gris iOS)
+     --mint:         #BCEBC9  feedback correcto
+     --blush-red:    #FFB4AB  feedback incorrecto
+     ============================================================ */
+
+  :root {
+    --rose-bg: #FFFBF8;
+    --rose-soft: #FFE1E8;
+    --rose-strong: #FF8FA3;
+    --rose-deep: #FF6B85;
+    --peach: #FFEEE2;
+    --ink: #3A3A3C;
+    --ink-soft: #8E8E93;
+    --mint: #BCEBC9;
+    --mint-deep: #4CAF6D;
+    --blush-red: #FFB4AB;
+    --blush-red-deep: #E5534B;
+    --white: #FFFFFF;
+  }
+
+  /* ============================================================
+     FONDO — el dachshund a ambos lados, mirando al centro
+     ============================================================ */
+
+  .dog-bg {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: 46vw;
+    max-width: 320px;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.16;
+    display: flex;
+    align-items: center;
+    filter: saturate(0.85);
+    /* multiply funde el blanco del jpg original con el fondo cálido
+       de la app sin necesidad de tocar el archivo de imagen */
+    mix-blend-mode: multiply;
+  }
+
+  .dog-bg img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .dog-bg.left {
+    left: 0;
+    justify-content: flex-start;
+  }
+
+  .dog-bg.right {
+    right: 0;
+    justify-content: flex-end;
+  }
+
+  .dog-bg.right img {
+    transform: scaleX(-1);
+  }
+
+  /* ============================================================
+     CONTENEDOR DE APP
+     ============================================================ */
+
+  .app {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(14px) scale(0.98);
+    transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  .screen.leaving {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+
+  /* ============================================================
+     TARJETA BASE (estilo iOS: bordes redondeados, sombra suave)
+     ============================================================ */
+
+  .card {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 32px;
+    padding: 40px 28px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow:
+      0 1px 2px rgba(255, 139, 163, 0.06),
+      0 12px 36px rgba(255, 139, 163, 0.14),
+      0 2px 8px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    text-align: center;
+    animation: cardIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--rose-deep);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.85;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    margin-bottom: 14px;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-bottom: 28px;
+  }
+
+  .subtitle.emphasis {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ============================================================
+     BOTONES ESTILO iOS
+     ============================================================ */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 17px 24px;
+    border-radius: 20px;
+    border: none;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.15s ease,
+                opacity 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .btn:active {
+    transform: scale(0.96);
+  }
+
+  .btn-primary {
+    background: linear-gradient(180deg, var(--rose-strong), var(--rose-deep));
+    color: white;
+    box-shadow: 0 8px 20px rgba(255, 111, 138, 0.35),
+                0 2px 6px rgba(255, 111, 138, 0.25);
+  }
+
+  .btn-primary:active {
+    box-shadow: 0 4px 10px rgba(255, 111, 138, 0.3);
+  }
+
+  .btn-secondary {
+    background: var(--peach);
+    color: var(--ink);
+    margin-top: 12px;
+  }
+
+  .btn.hidden {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  /* ============================================================
+     PANTALLA INICIAL — corazón latiendo
+     ============================================================ */
+
+  .heart-pulse {
+    font-size: 44px;
+    margin-bottom: 18px;
+    animation: pulse 1.8s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+
+  /* ============================================================
+     NIVEL 1 — grilla de frutas
+     ============================================================ */
+
+  .level-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--peach);
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+
+  .dot.dot-active {
+    background: var(--rose-strong);
+    transform: scale(1.25);
+  }
+
+  .dot.dot-done {
+    background: var(--mint-deep);
+  }
+
+  .fruit-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 6px 0 8px;
+    width: 100%;
+  }
+
+  .fruit-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    background: var(--peach);
+    border-radius: 16px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.2s ease,
+                opacity 0.3s ease;
+    animation: fruitIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @keyframes fruitIn {
+    from { opacity: 0; transform: scale(0.5) rotate(-8deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0); }
+  }
+
+  .fruit-cell:active {
+    transform: scale(0.88);
+  }
+
+  .fruit-cell.wrong {
+    animation: shake 0.4s ease;
+    background: var(--blush-red);
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .fruit-cell.correct {
+    animation: correctPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    background: var(--mint);
+    pointer-events: none;
+  }
+
+  @keyframes correctPop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.3) rotate(10deg); }
+    100% { transform: scale(0); opacity: 0; }
+  }
+
+  .fruit-cell.settled {
+    opacity: 0;
+    transform: scale(0);
+    pointer-events: none;
+  }
+
+  .toast-message {
+    position: absolute;
+    bottom: 14%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(58, 58, 60, 0.92);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 18px;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    z-index: 20;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+
+  .toast-message.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ============================================================
+     NIVEL 2 — trivia
+     ============================================================ */
+
+  .question-block {
+    margin-bottom: 22px;
+  }
+
+  .question-text {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.35;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    padding: 15px 18px;
+    border-radius: 16px;
+    border: 1.5px solid rgba(255, 143, 163, 0.25);
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .option-btn:active {
+    transform: scale(0.97);
+  }
+
+  .option-btn.correct-answer {
+    background: var(--mint);
+    border-color: var(--mint-deep);
+    color: #1E5631;
+    animation: correctFlash 0.5s ease;
+  }
+
+  .option-btn.wrong-answer {
+    background: var(--blush-red);
+    border-color: var(--blush-red-deep);
+    color: #7A1F1A;
+    animation: shake 0.4s ease;
+  }
+
+  @keyframes correctFlash {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+
+  .option-btn.disabled-option {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .retry-msg {
+    font-size: 14px;
+    color: var(--blush-red-deep);
+    font-weight: 600;
+    margin-top: 10px;
+    height: 18px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .retry-msg.show {
+    opacity: 1;
+  }
+
+  /* ============================================================
+     NIVEL 3 — sushi
+     ============================================================ */
+
+  .ingredient-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 6px 0 22px;
+  }
+
+  .ingredient-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background: var(--peach);
+    border-radius: 16px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.2s ease, border-color 0.2s ease;
+    animation: fruitIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ingredient-cell:active {
+    transform: scale(0.9);
+  }
+
+  .ingredient-cell.selected-good {
+    background: var(--mint);
+    border-color: var(--mint-deep);
+    transform: scale(1.05);
+  }
+
+  .ingredient-cell.selected-bad {
+    animation: shake 0.4s ease;
+  }
+
+  .sushi-reveal {
+    text-align: center;
+  }
+
+  .sushi-big {
+    font-size: 88px;
+    display: inline-block;
+    margin-bottom: 12px;
+    animation: sushiPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes sushiPop {
+    0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+    70%  { transform: scale(1.15) rotate(8deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  /* ============================================================
+     PANTALLA FINAL
+     ============================================================ */
+
+  .gift-icon {
+    font-size: 60px;
+    margin-bottom: 6px;
+    display: inline-block;
+    animation: giftFloat 2.4s ease-in-out infinite;
+  }
+
+  @keyframes giftFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(-3deg); }
+  }
+
+  .final-message-box {
+    background: var(--peach);
+    border-radius: 20px;
+    padding: 22px 20px;
+    margin-top: 18px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    font-weight: 500;
+    white-space: pre-line;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.5s ease, max-height 0.5s ease, margin-top 0.5s ease, padding 0.5s ease;
+  }
+
+  .final-message-box.revealed {
+    opacity: 1;
+    max-height: 400px;
+    margin-top: 18px;
+    padding: 22px 20px;
+  }
+
+  /* ============================================================
+     CORAZONES FLOTANTES + CONFETTI
+     ============================================================ */
+
+  .fx-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* Mientras dura la transición entre pantallas, los efectos de la
+     pantalla anterior se atenúan para no tapar el contenido nuevo */
+  .fx-layer.dimmed {
+    opacity: 0.25;
+    transition: opacity 0.4s ease;
+  }
+
+  .floating-heart {
+    position: absolute;
+    bottom: -40px;
+    font-size: 22px;
+    opacity: 0;
+    animation: floatUp linear forwards;
+  }
+
+  @keyframes floatUp {
+    0% {
+      opacity: 0;
+      transform: translateY(0) translateX(0) rotate(0deg) scale(0.7);
+    }
+    10% {
+      opacity: 0.9;
+    }
+    90% {
+      opacity: 0.85;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-115vh) translateX(var(--drift, 20px)) rotate(var(--rot, 25deg)) scale(1);
+    }
+  }
+
+  .confetti-piece {
+    position: absolute;
+    top: -20px;
+    width: 8px;
+    height: 8px;
+    opacity: 0;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% {
+      opacity: 0;
+      transform: translateY(0) translateX(0) rotate(0deg);
+    }
+    8% { opacity: 1; }
+    100% {
+      opacity: 0.9;
+      transform: translateY(105vh) translateX(var(--drift, 40px)) rotate(var(--rot, 360deg));
+    }
+  }
+
+  /* ============================================================
+     ÉXITO DE NIVEL (checkmark overlay breve)
+     ============================================================ */
+
+  .level-success-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--mint);
+    font-size: 28px;
+    margin: 4px auto 14px;
+    animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes badgePop {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+
+  .fade-block {
+    animation: fadeInBlock 0.5s ease both;
+  }
+
+  @keyframes fadeInBlock {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================================
+     RESPONSIVE — ajustes finos
+     ============================================================ */
+
+  @media (max-width: 380px) {
+    .card { padding: 34px 22px; max-width: 340px; }
+    h1 { font-size: 23px; }
+    .fruit-cell { font-size: 26px; }
+    .ingredient-cell { font-size: 21px; }
+  }
+
+  @media (max-height: 700px) {
+    .card { padding: 28px 22px; }
+    .heart-pulse { font-size: 36px; margin-bottom: 12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- ============================================================
+       FONDO: dachshund a ambos lados, mirando hacia el centro
+       ============================================================ -->
+  <div class="dog-bg left">
+    <img src="salchicha.jpg" alt="">
+  </div>
+  <div class="dog-bg right">
+    <img src="salchicha.jpg" alt="">
+  </div>
+
+  <!-- Capa de efectos (corazones / confetti) -->
+  <div class="fx-layer" id="fxLayer"></div>
+
+  <div class="app" id="app">
+
+    <!-- ============================================================
+         PANTALLA 0 — INICIO
+         ============================================================ -->
+    <section class="screen active" id="screen-start">
+      <div class="card">
+        <span class="heart-pulse">❤️</span>
+        <h1>❤️ Te hice un regalito ❤️</h1>
+        <p class="subtitle">Para lo poco que sé es una banda esto deeaa</p>
+        <button class="btn btn-primary" id="btnStart">✨ Comenzar</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA 1 — NIVEL 1: frutas
+         ============================================================ -->
+    <section class="screen" id="screen-level1">
+      <div class="card">
+        <div class="progress-dots">
+          <span class="dot dot-active" id="dotL1"></span>
+          <span class="dot" id="dotL2"></span>
+          <span class="dot" id="dotL3"></span>
+        </div>
+        <h1>🍇 Encuentra las moras escondidas</h1>
+        <p class="subtitle">Tocá únicamente las moras.</p>
+
+        <div class="fruit-grid" id="fruitGrid"></div>
+
+        <button class="btn btn-primary hidden" id="btnNextFromL1">Siguiente</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA 2 — NIVEL 2: trivia
+         ============================================================ -->
+    <section class="screen" id="screen-level2">
+      <div class="card">
+        <div class="progress-dots">
+          <span class="dot dot-done" id="dotL1b"></span>
+          <span class="dot dot-active" id="dotL2b"></span>
+          <span class="dot" id="dotL3b"></span>
+        </div>
+        <h1>💘 ¿Cuánto conocés a tu futuro marido?</h1>
+
+        <div id="quizContainer"></div>
+
+        <button class="btn btn-primary hidden" id="btnNextFromL2">Siguiente</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA 3 — NIVEL 3: sushi
+         ============================================================ -->
+    <section class="screen" id="screen-level3">
+      <div class="card" id="level3Card">
+        <div class="progress-dots">
+          <span class="dot dot-done" id="dotL1c"></span>
+          <span class="dot dot-done" id="dotL2c"></span>
+          <span class="dot dot-active" id="dotL3c"></span>
+        </div>
+        <h1>🍣 Armemos nuestro sushi</h1>
+        <p class="subtitle">Elegí los ingredientes correctos (ponete lentess xD)</p>
+
+        <div class="ingredient-grid" id="ingredientGrid"></div>
+
+        <button class="btn btn-primary hidden" id="btnNextFromL3">Continuar</button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA 4 — FINAL
+         ============================================================ -->
+    <section class="screen" id="screen-final">
+      <div class="card">
+        <span class="gift-icon">🎁</span>
+        <h1>Reclamá tu regalito</h1>
+        <p class="subtitle emphasis">❤️<br>Te ganaste nuestra segunda cita :)</p>
+        <button class="btn btn-primary" id="btnClaim">Reclamar regalito</button>
+        <div class="final-message-box" id="finalMessageBox">Ojalá te ande xq me corto los webos.
+te amo mucho espero nos veamos pronto.
+desayunaaaaaaaaaaa
+bye</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Toast para mensajes de nivel 1 -->
+  <div class="toast-message" id="toastMessage"></div>
+
+<script>
+/* ================================================================
+   ESTADO GLOBAL Y NAVEGACIÓN ENTRE PANTALLAS
+   ================================================================ */
+
+const screens = {
+  start: document.getElementById('screen-start'),
+  level1: document.getElementById('screen-level1'),
+  level2: document.getElementById('screen-level2'),
+  level3: document.getElementById('screen-level3'),
+  final: document.getElementById('screen-final'),
+};
+
+/**
+ * Transición elegante entre pantallas: la actual se desliza hacia
+ * arriba y se difumina, la nueva entra desde abajo.
+ */
+function goToScreen(name) {
+  const current = document.querySelector('.screen.active');
+  const next = screens[name];
+  if (!next || current === next) return;
+
+  if (current) {
+    current.classList.add('leaving');
+    current.classList.remove('active');
+    setTimeout(() => current.classList.remove('leaving'), 600);
+  }
+
+  // Al cambiar de pantalla, limpiamos cualquier corazón/confetti que
+  // haya quedado de la pantalla anterior para que nunca tape el
+  // contenido nuevo (la celebración pertenece a la pantalla donde
+  // ocurrió, no a la siguiente)
+  clearFx();
+
+  // pequeño delay para que se sienta como una transición secuencial,
+  // no un corte instantáneo
+  setTimeout(() => {
+    next.classList.add('active');
+  }, 90);
+}
+
+/** Remueve todas las partículas de efectos activas con un fade rápido */
+function clearFx() {
+  const layer = document.getElementById('fxLayer');
+  const particles = layer.querySelectorAll('.floating-heart, .confetti-piece');
+  particles.forEach(p => {
+    p.style.transition = 'opacity 0.25s ease';
+    p.style.opacity = '0';
+    setTimeout(() => p.remove(), 260);
+  });
+}
+
+/** Vibración suave si el dispositivo lo soporta (Safari iOS no soporta
+ *  la Vibration API, así que esto degrada de forma silenciosa) */
+function hapticTap(pattern) {
+  if (navigator.vibrate) {
+    try { navigator.vibrate(pattern); } catch (e) { /* no-op */ }
+  }
+}
+
+/* ================================================================
+   BOTÓN "COMENZAR"
+   ================================================================ */
+
+document.getElementById('btnStart').addEventListener('click', () => {
+  hapticTap(15);
+  goToScreen('level1');
+});
+
+/* ================================================================
+   NIVEL 1 — ENCONTRAR LAS MORAS
+   ================================================================ */
+
+const FRUIT_POOL = ['🍎', '🍌', '🍊', '🍒', '🍓', '🍍', '🍉', '🥝', '🍋'];
+const GRAPE = '🍇';
+const GRAPE_MESSAGES = ['❤ aa ves bien.', '✨ te amo.', '🌙 ponete lentes xD.'];
+
+let grapesFound = 0;
+const TOTAL_GRAPES = 3;
+
+/** Mezcla un arreglo (Fisher-Yates) */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildFruitGrid() {
+  const grid = document.getElementById('fruitGrid');
+  grid.innerHTML = '';
+
+  // 12 celdas: 3 uvas + 9 frutas random del pool (con repetición permitida)
+  const items = [GRAPE, GRAPE, GRAPE];
+  for (let i = 0; i < 9; i++) {
+    items.push(FRUIT_POOL[Math.floor(Math.random() * FRUIT_POOL.length)]);
+  }
+
+  const shuffled = shuffle(items);
+
+  shuffled.forEach((fruit, index) => {
+    const cell = document.createElement('button');
+    cell.className = 'fruit-cell';
+    cell.textContent = fruit;
+    cell.style.animationDelay = (index * 0.04) + 's';
+    cell.dataset.isGrape = (fruit === GRAPE) ? 'true' : 'false';
+
+    cell.addEventListener('click', () => handleFruitTap(cell));
+    grid.appendChild(cell);
+  });
+}
+
+function handleFruitTap(cell) {
+  if (cell.classList.contains('correct') || cell.classList.contains('settled')) return;
+
+  if (cell.dataset.isGrape === 'true') {
+    hapticTap(20);
+    cell.classList.add('correct');
+    cell.dataset.isGrape = 'used';
+
+    const message = GRAPE_MESSAGES[grapesFound] || GRAPE_MESSAGES[GRAPE_MESSAGES.length - 1];
+    showToast(message);
+
+    grapesFound++;
+
+    setTimeout(() => {
+      cell.classList.add('settled');
+    }, 480);
+
+    if (grapesFound >= TOTAL_GRAPES) {
+      setTimeout(() => completeLevel1(), 650);
+    }
+  } else {
+    hapticTap([10, 40, 10]);
+    cell.classList.add('wrong');
+    setTimeout(() => cell.classList.remove('wrong'), 420);
+  }
+}
+
+function showToast(text) {
+  const toast = document.getElementById('toastMessage');
+  toast.textContent = text;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+function completeLevel1() {
+  const btn = document.getElementById('btnNextFromL1');
+  btn.classList.remove('hidden');
+  spawnHearts(5);
+}
+
+document.getElementById('btnNextFromL1').addEventListener('click', () => {
+  hapticTap(15);
+  document.getElementById('dotL2b') && document.getElementById('dotL2b');
+  goToScreen('level2');
+});
+
+/* ================================================================
+   NIVEL 2 — TRIVIA "¿CUÁNTO CONOCÉS A TU FUTURO MARIDO?"
+   ================================================================ */
+
+const QUIZ = [
+  {
+    question: '¿Cuál es mi comida favorita?',
+    options: ['Hamburguesa', 'Pizza', 'Pasta'],
+    correctIndex: 1,
+  },
+  {
+    question: 'Me gustan los...',
+    options: ['Dragones', 'Gatos', 'Autos'],
+    correctIndex: 0,
+  },
+  {
+    question: 'Me gusta mucho...',
+    options: ['La playa', 'La montaña', 'La nieve'],
+    correctIndex: 0,
+  },
+];
+
+let currentQuizIndex = 0;
+let quizCorrectCount = 0;
+
+function renderQuizQuestion() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+
+  if (currentQuizIndex >= QUIZ.length) {
+    // Todas las preguntas respondidas correctamente
+    container.innerHTML = `
+      <div class="fade-block" style="text-align:center;">
+        <span class="level-success-badge">✅</span>
+        <p class="subtitle emphasis">bueno... bien, no te tenía fé</p>
+      </div>
+    `;
+    document.getElementById('btnNextFromL2').classList.remove('hidden');
+    spawnHearts(6);
+    return;
+  }
+
+  const q = QUIZ[currentQuizIndex];
+
+  const block = document.createElement('div');
+  block.className = 'question-block fade-block';
+
+  const qText = document.createElement('div');
+  qText.className = 'question-text';
+  qText.textContent = q.question;
+  block.appendChild(qText);
+
+  const optionsList = document.createElement('div');
+  optionsList.className = 'options-list';
+
+  q.options.forEach((optionText, idx) => {
+    const optBtn = document.createElement('button');
+    optBtn.className = 'option-btn';
+    optBtn.textContent = optionText;
+    optBtn.addEventListener('click', () => handleQuizAnswer(idx, q.correctIndex, optBtn, optionsList));
+    optionsList.appendChild(optBtn);
+  });
+
+  block.appendChild(optionsList);
+
+  const retryMsg = document.createElement('div');
+  retryMsg.className = 'retry-msg';
+  retryMsg.id = 'retryMsg';
+  retryMsg.textContent = 'ni cerca';
+  block.appendChild(retryMsg);
+
+  container.appendChild(block);
+}
+
+function handleQuizAnswer(selectedIdx, correctIdx, btnEl, listEl) {
+  const allOptions = listEl.querySelectorAll('.option-btn');
+
+  if (selectedIdx === correctIdx) {
+    hapticTap(20);
+    allOptions.forEach(o => o.classList.add('disabled-option'));
+    btnEl.classList.remove('disabled-option');
+    btnEl.classList.add('correct-answer');
+
+    setTimeout(() => {
+      currentQuizIndex++;
+      renderQuizQuestion();
+    }, 700);
+  } else {
+    hapticTap([10, 40, 10]);
+    btnEl.classList.add('wrong-answer');
+    const retryMsg = document.getElementById('retryMsg');
+    if (retryMsg) retryMsg.classList.add('show');
+
+    setTimeout(() => {
+      btnEl.classList.remove('wrong-answer');
+    }, 450);
+  }
+}
+
+document.getElementById('btnNextFromL2').addEventListener('click', () => {
+  hapticTap(15);
+  goToScreen('level3');
+});
+
+/* ================================================================
+   NIVEL 3 — ARMEMOS NUESTRO SUSHI
+   ================================================================ */
+
+const SUSHI_CORRECT = ['🐟', '🍚', '🥑'];
+const SUSHI_DISTRACTORS = ['🍫', '🍪', '🍕', '🍔', '🌭', '🥦', '🍓'];
+
+let sushiSelected = new Set();
+
+function buildIngredientGrid() {
+  const grid = document.getElementById('ingredientGrid');
+  grid.innerHTML = '';
+
+  const items = shuffle([...SUSHI_CORRECT, ...SUSHI_DISTRACTORS]);
+
+  items.forEach((ingredient, index) => {
+    const cell = document.createElement('button');
+    cell.className = 'ingredient-cell';
+    cell.textContent = ingredient;
+    cell.style.animationDelay = (index * 0.04) + 's';
+    cell.dataset.correct = SUSHI_CORRECT.includes(ingredient) ? 'true' : 'false';
+    cell.dataset.ingredient = ingredient;
+
+    cell.addEventListener('click', () => handleIngredientTap(cell));
+    grid.appendChild(cell);
+  });
+}
+
+function handleIngredientTap(cell) {
+  if (cell.classList.contains('selected-good')) return;
+
+  if (cell.dataset.correct === 'true') {
+    hapticTap(20);
+    cell.classList.add('selected-good');
+    sushiSelected.add(cell.dataset.ingredient);
+
+    if (sushiSelected.size >= SUSHI_CORRECT.length) {
+      setTimeout(() => revealSushi(), 500);
+    }
+  } else {
+    hapticTap([10, 40, 10]);
+    cell.classList.add('selected-bad');
+    setTimeout(() => cell.classList.remove('selected-bad'), 420);
+  }
+}
+
+function revealSushi() {
+  const card = document.getElementById('level3Card');
+
+  const reveal = document.createElement('div');
+  reveal.className = 'sushi-reveal fade-block';
+  reveal.innerHTML = `
+    <span class="sushi-big">🍣</span>
+    <p class="subtitle emphasis">Ahora seee papaaaaaaa.</p>
+  `;
+
+  // Reemplaza la grilla por la revelación del sushi
+  document.getElementById('ingredientGrid').replaceWith(reveal);
+
+  document.getElementById('btnNextFromL3').classList.remove('hidden');
+  spawnHearts(8);
+  spawnConfetti(18);
+}
+
+document.getElementById('btnNextFromL3').addEventListener('click', () => {
+  hapticTap(15);
+  goToScreen('final');
+  setTimeout(() => spawnHearts(10), 300);
+});
+
+/* ================================================================
+   PANTALLA FINAL — RECLAMAR REGALITO
+   ================================================================ */
+
+document.getElementById('btnClaim').addEventListener('click', () => {
+  hapticTap([15, 30, 15]);
+  const box = document.getElementById('finalMessageBox');
+  box.classList.add('revealed');
+  spawnConfetti(30);
+  spawnHearts(14);
+
+  const btn = document.getElementById('btnClaim');
+  btn.textContent = '❤️ Reclamado';
+  btn.style.opacity = '0.7';
+  btn.disabled = true;
+});
+
+/* ================================================================
+   EFECTOS: CORAZONES FLOTANTES Y CONFETTI
+   ================================================================ */
+
+const HEART_EMOJIS = ['❤️', '💕', '💗', '🌸'];
+const CONFETTI_COLORS = ['#FF8FA3', '#FFD4DE', '#FFEEE2', '#BCEBC9', '#FFB4AB'];
+
+// Tope global de partículas simultáneas: evita que llamadas repetidas
+// dentro de la misma pantalla (p. ej. 3 uvas encontradas) saturen el
+// centro de la tarjeta y tapen el texto.
+const MAX_PARTICLES = 22;
+
+function currentParticleCount() {
+  return document.getElementById('fxLayer').childElementCount;
+}
+
+/** Los corazones nacen cerca de los bordes izquierdo/derecho y suben
+ *  pegados a esos costados, dejando libre la franja central donde
+ *  vive el texto de la tarjeta. */
+function spawnHearts(count) {
+  const layer = document.getElementById('fxLayer');
+  const room = MAX_PARTICLES - currentParticleCount();
+  const n = Math.max(0, Math.min(count, room));
+
+  for (let i = 0; i < n; i++) {
+    const heart = document.createElement('span');
+    heart.className = 'floating-heart';
+    heart.textContent = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];
+
+    // Franja izquierda (2–16vw) o derecha (84–98vw), nunca el centro
+    const onLeft = Math.random() > 0.5;
+    const startX = onLeft ? (2 + Math.random() * 14) : (84 + Math.random() * 14);
+    const drift = ((onLeft ? 1 : -1) * (10 + Math.random() * 30)) + 'px';
+    const rot = (Math.random() * 50 - 25) + 'deg';
+    const duration = 3.2 + Math.random() * 1.8;
+    const delay = Math.random() * 0.6;
+
+    heart.style.left = startX + 'vw';
+    heart.style.setProperty('--drift', drift);
+    heart.style.setProperty('--rot', rot);
+    heart.style.animationDuration = duration + 's';
+    heart.style.animationDelay = delay + 's';
+    heart.style.fontSize = (16 + Math.random() * 14) + 'px';
+
+    layer.appendChild(heart);
+    setTimeout(() => heart.remove(), (duration + delay) * 1000 + 200);
+  }
+}
+
+function spawnConfetti(count) {
+  const layer = document.getElementById('fxLayer');
+  const room = MAX_PARTICLES - currentParticleCount();
+  const n = Math.max(0, Math.min(count, room));
+
+  for (let i = 0; i < n; i++) {
+    const piece = document.createElement('span');
+    piece.className = 'confetti-piece';
+
+    // El confetti cae desde arriba, así que lo dejamos en todo el
+    // ancho pero rápido: cae y se limpia antes de acumularse.
+    const startX = Math.random() * 100;
+    const drift = (Math.random() * 120 - 60) + 'px';
+    const rot = (Math.random() * 500 + 200) + 'deg';
+    const duration = 1.7 + Math.random() * 1.0;
+    const delay = Math.random() * 0.4;
+    const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+
+    piece.style.left = startX + 'vw';
+    piece.style.background = color;
+    piece.style.setProperty('--drift', drift);
+    piece.style.setProperty('--rot', rot);
+    piece.style.animationDuration = duration + 's';
+    piece.style.animationDelay = delay + 's';
+    piece.style.borderRadius = (Math.random() > 0.5) ? '50%' : '2px';
+
+    layer.appendChild(piece);
+    setTimeout(() => piece.remove(), (duration + delay) * 1000 + 200);
+  }
+}
+
+/* ================================================================
+   INICIALIZACIÓN
+   ================================================================ */
+
+function init() {
+  buildFruitGrid();
+  renderQuizQuestion();
+  buildIngredientGrid();
+}
+
+init();
+
+</script>
+</body>
+</html>
