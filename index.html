@@ -62,45 +62,29 @@
   }
 
   /* ============================================================
-     FONDO — el dachshund a ambos lados, mirando al centro
+     FONDO — patrón del dachshund a pantalla completa (formato historia)
      ============================================================ */
 
-  .dog-bg {
+  .dog-bg-full {
     position: fixed;
-    top: 0;
+    inset: 0;
+    width: 100%;
     height: 100vh;
     height: 100dvh;
-    width: 46vw;
-    max-width: 320px;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.34;
-    display: flex;
-    align-items: center;
-    filter: saturate(0.85);
-    /* multiply funde el blanco del jpg original con el fondo cálido
-       de la app sin necesidad de tocar el archivo de imagen */
-    mix-blend-mode: multiply;
+    object-fit: cover;
+    object-position: center;
   }
 
-  .dog-bg img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .dog-bg.left {
-    left: 0;
-    justify-content: flex-start;
-  }
-
-  .dog-bg.right {
-    right: 0;
-    justify-content: flex-end;
-  }
-
-  .dog-bg.right img {
-    transform: scaleX(-1);
+  /* Velo suave para que el patrón se note pero no compita con el
+     contenido de las tarjetas que van encima */
+  .dog-bg-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: rgba(255, 251, 248, 0.32);
   }
 
   /* ============================================================
@@ -703,14 +687,10 @@
 <body>
 
   <!-- ============================================================
-       FONDO: dachshund a ambos lados, mirando hacia el centro
+       FONDO: patrón del dachshund a pantalla completa (formato historia)
        ============================================================ -->
-  <div class="dog-bg left">
-    <img src="salchicha.jpg" alt="">
-  </div>
-  <div class="dog-bg right">
-    <img src="salchicha.jpg" alt="">
-  </div>
+  <img class="dog-bg-full" src="salchicha.png" alt="">
+  <div class="dog-bg-veil"></div>
 
   <!-- Capa de efectos (corazones / confetti) -->
   <div class="fx-layer" id="fxLayer"></div>
