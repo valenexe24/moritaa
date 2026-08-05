@@ -861,8 +861,7 @@ document.getElementById('btnStart').addEventListener('click', () => {
 
 const FRUIT_POOL = ['🍎', '🍌', '🍊', '🍒', '🍓', '🍍', '🍉', '🥝', '🍋'];
 const GRAPE = '🍇';
-const GRAPE_MESSAGES = ['❤ aa ves bien.', '✨ te amo.', '🌙 ponete lentes xD.'];
-
+const GRAPE_MESSAGES = ['❤ aa ves bien.', '🌙 ponete lentes xD.', '✨ te amo.'];
 let grapesFound = 0;
 const TOTAL_GRAPES = 3;
 
@@ -980,7 +979,7 @@ function renderQuizQuestion() {
     container.innerHTML = `
       <div class="fade-block" style="text-align:center;">
         <span class="level-success-badge">✅</span>
-        <p class="subtitle emphasis">Mas te valía acertar eee</p>
+        <p class="subtitle emphasis">más te valía acertar eee</p>
       </div>
     `;
     document.getElementById('btnNextFromL2').classList.remove('hidden');
